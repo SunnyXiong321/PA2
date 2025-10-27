@@ -1,1 +1,0 @@
-my_schedule = open("periodic_table2.txt")
