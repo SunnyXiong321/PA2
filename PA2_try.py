@@ -7,10 +7,28 @@ file_name = ""
 
 def play_quiz(filename):
     print(f"play_quiz function called with {filename}")
+    try: 
+        file = open(filename, "r")
+    except FileNotFoundError:
+        print ("file not found, please check your spelling and try again")
+        return 0
+    lines = file.readlines()  
+    file.close() 
+    print("Number of lines:", len(lines))
+    if len(lines)> 0:
+        print ("The First line is:", lines [0].strip())
+    return 0
+
+    flashcards = []
+    for line in lines:
+        line = line.strip()
+        if line == "":
+            continue
 
 
 def show_scores():
     print("shows_scores function called")
+
     
 
 def add_scores():
