@@ -6,7 +6,8 @@ file_name = ""
 
 
 def play_quiz(filename):
-    print(f"play_quiz function called with {filename}")
+    global file_name
+    file_name = filename
 
     try: 
         file = open(filename, "r")
@@ -37,19 +38,104 @@ def play_quiz(filename):
         definition = definition.strip()
         flashcards.append([term, definition])
 
+    if len(flashcards) == 0: 
+        print("No valid flashcards found in this file.") 
+        return 0
+    
     print("First flashcard:", flashcards[0])
     print("Total cards:", len(flashcards))
 
-    # move return 0 so all code runs first
-    return 0
+    random.shuffle(flashcards)
+
+
+    while True:   # loop until user gives valid input
+        num_q = input(f"There are {len(flashcards)} cards. How many would you like? ")
+
+        # check if it's a number
+        if not num_q.isdigit():
+            print("Please type a NUMBER.")
+            continue   # go back to top of loop
+
+        # turn text to number
+        num_q = int(num_q)
+
+        # check if number is in valid range
+        if 1 <= num_q <= len(flashcards):
+            break   # ✅ valid → exit loop
+        else:
+            print(f"Please type a number between 1 and {len(flashcards)}.")
+
+    print("Okay! We'll do", num_q, "question(s).")
+
+
+
+    score = 0
+
+    for i in range(num_q):
+        term = flashcards[i][0]
+        definition = flashcards[i][1]
+
+        user_text = f"Q{i+1}. What is the definition of '{term}'? "
+        answer = input(user_text).strip().lower()
+
+        if answer == definition.lower():
+            print("✅ Correct!\n")
+            score += 1
+        else:
+            print(f"❌ Incorrect. Correct answer: {definition}\n")
+
+    print(f"Your score: {score}/{num_q}\n")
+
+    # remember results for add_scores()
+    global final_score, question_total
+    final_score = score
+    question_total = num_q
+
+    return score
 
 def show_scores():
-    print("shows_scores function called")
+    print ("\n=== Previous Scores ===")
 
+    try:
+        score_file = open("scores.txt", "r")  # read mode
+    except FileNotFoundError: 
+        print("No scores file found yet.") 
+        return 
+    
+    lines = score_file.readlines()
+    score_file.close()
+
+    
+    if len(lines) == 0:
+        print("No scores recorded yet.")
+        return
+
+    for line in lines:
+        print(line.strip())   # remove extra newline
+ 
     
 
 def add_scores():
     print("add_scores function called")
+    global final_score, question_total, file_name
+
+    # ask user for name
+    username = input("Enter your name: ")
+
+    # get timestamp
+    now = time.ctime()
+
+    # prepare a string to write into file
+    record = f"{username} ; {final_score}/{question_total} ; {file_name} ; {now}\n"
+
+    # open file in APPEND mode → keeps previous data
+    try:
+        score_file = open("scores.txt", "a")
+        score_file.write(record)
+        score_file.close()
+        print("✅ Score saved!")
+    except:
+        print("❌ Could not write to file.")
 
 
 def print_error():

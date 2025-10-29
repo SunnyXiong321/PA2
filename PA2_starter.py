@@ -16,6 +16,8 @@ You may not necessarily have to edit the main function.
 
 def play_quiz(filename):
     print(f"play_quiz function called with {filename}")
+    score = 0
+    return score
 
 
 def show_scores():
@@ -23,7 +25,7 @@ def show_scores():
     
 
 def add_scores():
-    print("add_scores function called")
+    print("add_scores function called with score to add as parameter")
 
 
 def print_error():
