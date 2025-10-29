@@ -15,12 +15,14 @@ def play_quiz(filename):
         print("file not found, please check your spelling and try again")
         return 0
 
+
     lines = file.readlines()  
     file.close() 
 
     print("Number of lines:", len(lines))
     if len(lines) > 0:
         print("The First line is:", lines[0].strip())
+
 
     flashcards = []
     for line in lines:
@@ -81,8 +83,13 @@ def play_quiz(filename):
         if answer == definition.lower():
             print("✅ Correct!\n")
             score += 1
+        #if answer == "exit":
+
         else:
             print(f"❌ Incorrect. Correct answer: {definition}\n")
+        
+
+        
 
     print(f"Your score: {score}/{num_q}\n")
 
