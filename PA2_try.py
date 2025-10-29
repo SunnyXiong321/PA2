@@ -75,7 +75,7 @@ def play_quiz(filename):
         term = flashcards[i][0]
         definition = flashcards[i][1]
 
-        user_text = f"Q{i+1}. What is the definition of '{term}'? "
+        user_text = f"Q{i+1}. What is the name of element with this symbol:'{term}'? "
         answer = input(user_text).strip().lower()
 
         if answer == definition.lower():
@@ -99,7 +99,7 @@ def show_scores():
     try:
         score_file = open("scores.txt", "r")  # read mode
     except FileNotFoundError: 
-        print("No scores file found yet.") 
+        print("No scores file found yet. Let's start playing the game!") 
         return 
     
     lines = score_file.readlines()
@@ -156,14 +156,15 @@ def main():
     game_on = True
 
     while game_on:
-        print("welcome to the review game")
-        
+        print("Hello User! Welcome to the Ultimate Chemistry Periodic Table Review Game!")
+        time.sleep (1)
+        print("Let's get started!")
         while first_choice not in e_options: #first runs bc first_choice == "", then bc they haven't said exit
             for item in initial_choices: #prints out play, see history, and exit
                 print(f"- {item}")
             first_choice = input("what would you like to do?\n> ").lower().strip()
             if first_choice in p_options: #playing the game
-                quiz_fn = input("what is the name of your file?\n> ").lower().strip()
+                quiz_fn = input("what is the name of your file? (periodic_table)\n> ").lower().strip()
                 quiz_ext = input("is it a .txt or .csv file?\n> ").lower().strip()
                 while quiz_ext not in file_types: #if file type isn't txt/csv, there will be error
                     print_error()
