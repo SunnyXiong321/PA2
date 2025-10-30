@@ -142,7 +142,7 @@ def main():
     game_on = True
 
     while game_on:
-        print(" \n Hello User! Welcome to the Ultimate Chemistry Periodic Table Review Game!")
+        print(" \nHello User! Welcome to the Ultimate Chemistry Periodic Table Review Game!")
         time.sleep(1)
         print("Let's get started!")
         while first_choice not in e_options:
