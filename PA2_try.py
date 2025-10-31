@@ -1,3 +1,21 @@
+'''
+PA2 --  Periodic Review
+By: Sunny Xiong
+What it does: It creates a flashcards for chemistry students to study for periodic table, 
+where it'll provide the symbol and user answers the name
+By doing this, the program needs to reads the text from either csv or txt files, play the 
+flashcard game out, and record user history.
+What went well: once the structure is clear, the coding became easy, the formatting part 
+and the read files from csv/txt part is not hard
+what would have made it even better: I would maybe create more decks for different classes 
+for better user experience.
+what you would do with more time to work: format it better, add some effects if they got right/wrong.
+pledge: I neither given nor received help on this assignment except i let my friends look through and 
+peer reviewed, I went on google and youtube to find tutorials, and went over with Mx.K.
+
+'''
+
+
 import time #record the time to save score
 import random #shuffle the flashcards
 final_score = 0 
@@ -7,6 +25,7 @@ file_name = ""
 
 def play_quiz(filename):
     global file_name, final_score, question_total
+    #using try/except so that when file is not found the code wouldn't crash
     try:
         with open(filename, "r") as f:
             lines = f.readlines()
@@ -21,6 +40,7 @@ def play_quiz(filename):
 
     flashcards = []
     for line in lines:
+        #strip removes spaces/new lines so it splits
         line = line.strip()
         if line == "":
             continue
@@ -34,24 +54,23 @@ def play_quiz(filename):
         definition = definition.strip()
         if term and definition:
             flashcards.append([term, definition])
-
-    if len(flashcards) == 0:
+    
+ 
+    if len(flashcards) == 0:   #stop early if the deck is empty (no valid cards to quiz)
         print("No valid flashcards found in this file.")
         return None
 
-
-    global file_name
     file_name = filename
 
     print("First flashcard:", flashcards[0])
     print("Total cards:", len(flashcards))
 
-    random.shuffle(flashcards)
+    random.shuffle(flashcards) #shuffling so it's better for review
 
 
-    while True:
+    while True: #using this allows to keep going on until user provide valid number
         num_q = input(f"There are {len(flashcards)} cards. How many would you like? ")
-        if not num_q.isdigit():
+        if not num_q.isdigit(): #make sure the user is typing numbers, and not other stuff
             print("Please type a NUMBER.")
             continue
         num_q = int(num_q)
@@ -61,7 +80,7 @@ def play_quiz(filename):
     print("Okay! We'll do", num_q, "question(s).")
 
     score = 0
-    for i in range(num_q):
+    for i in range(num_q):#repeat for the number of questions the user requested
         term, definition = flashcards[i]
         user_text = (
             f"Q{i+1}. What is the name of the element with symbol '{term}'? "
@@ -69,9 +88,8 @@ def play_quiz(filename):
         )
         answer = input(user_text).strip().lower()
 
-        if answer == "quit":
+        if answer == "quit": #allows user to quit and save progress 
             print(f"Quitting early… saving score so far: {score}/{i}")
-            global final_score, question_total
             final_score = score
             question_total = i  # counts completed questions only
             return -1
@@ -84,6 +102,7 @@ def play_quiz(filename):
 
     print(f"Your score: {score}/{num_q}\n")
 
+    #store results so add_scores() can write to the history file
     final_score = score
     question_total = num_q
 
@@ -92,6 +111,7 @@ def play_quiz(filename):
 
 def show_scores():
     print("\n=== Previous Scores ===")
+    #prevent from crashing if there are no files
     try:
         with open("scores.txt", "r") as score_file:
             lines = score_file.readlines()
@@ -100,6 +120,7 @@ def show_scores():
         return
 
     printed = False
+    #skip blank lines to make output clean
     for line in lines:
         text = line.strip()
         if text:
@@ -115,7 +136,7 @@ def add_scores():
     now = time.ctime()
     record = f"{username} ; {final_score}/{question_total} ; {file_name} ; {now}\n"
     try:
-        with open("scores.txt", "a") as score_file:
+        with open("scores.txt", "a") as score_file: #append mode saves new score without deleting older ones
             score_file.write(record)
         print("✅ Score saved!")
     except OSError as e:
@@ -146,14 +167,14 @@ def main():
         time.sleep(1)
         print("Let's get started!")
         while first_choice not in e_options:
-            for item in initial_choices:
+            for item in initial_choices:#show menu options every time so user knows choices
                 print(f"- {item}")
             first_choice = input("what would you like to do?\n> ").lower().strip()
 
             if first_choice in p_options:
                 quiz_fn = input("what is the name of your file? (periodic_table)\n> ").lower().strip()
                 quiz_ext = input("is it a .txt or .csv file?\n> ").lower().strip()
-                while quiz_ext not in file_types:
+                while quiz_ext not in file_types: #make sure file type is txt/csv
                     print_error()
                     print("your choices are:")
                     for item in file_types:
@@ -169,11 +190,11 @@ def main():
 
                 # Early quit: save partial and exit program
                 if result == -1:
-                    add_scores()
+                    if question_total > 0: #avoid 0/0 if quitting immediately
+                        add_scores()
                     print("Returning to menu...\n")
                     first_choice = "" 
-                    continue    
-
+                    continue
                 # Normal completion: save and show menu again
                 if question_total > 0:
                     add_scores()
