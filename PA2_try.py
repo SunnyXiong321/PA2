@@ -23,50 +23,83 @@ question_total = 0
 file_name = ""
 
 
-def play_quiz(filename):
-    global file_name, final_score, question_total
-    #using try/except so that when file is not found the code wouldn't crash
-    try:
-        with open(filename, "r") as f:
-            lines = f.readlines()
-    except FileNotFoundError:
-        print("File not found. Please check your spelling and try again.")
+def parse_line(line):
+        
+    '''
+    - Takes one line of text and tries to extract a flashcard pair.
+    - accepts format: term,definition
+
+    Parameters:
+    line (str)
+
+    Returns:
+    if valid = (term, definition)   
+    if invalid = None
+    '''
+
+
+    line = line.strip()  # remove spaces & newline around the text
+    if line == "":       # ignore empty lines
         return None
 
-    print("Number of lines:", len(lines))
-    if len(lines) > 0:
-        print("The first raw line is:", lines[0].strip())
+    # accept only "term,definition" format
+    if "," in line:
+        parts = line.split(",", 1)   # split only at first comma
+    else:
+        return None                  # no comma = not a valid card
+
+    term = parts[0].strip()
+    definition = parts[1].strip()
+
+    if term and definition:          # both pieces must exist
+        return term, definition      # return both values together
+
+    return None                      # missing either piece = skip 
 
 
-    flashcards = []
-    for line in lines:
-        #strip removes spaces/new lines so it splits
-        line = line.strip()
-        if line == "":
+def play_quiz(filename):
+    '''
+    Parameters:
+    filename (str)
+
+    Returns:
+    score (int) → number correct
+    -1 → quit early
+    None → file error or empty deck
+    '''
+
+    global file_name, final_score, question_total   # allow function to update globals used later for saving scores
+
+    try:  # try reading file; prevents crash if user typed wrong filename
+        with open(filename, "r") as f:  # open the deck in read-only mode
+            lines = f.readlines()  # read entire file into a list of lines
+    except FileNotFoundError:
+        print("File not found. Please check your spelling and try again.")
+        return None  
+
+
+    flashcards = []  
+    for line in lines: 
+        parsed = parse_line(line) # use helper to extract term + definition
+        if parsed is None:  # skip lines that are blank or incorrectly formatted
             continue
-        if "," in line:
-            term, definition = line.split(",", 1)
-        elif " - " in line:
-            term, definition = line.split(" - ", 1)
-        else:
-            continue
-        term = term.strip()
-        definition = definition.strip()
-        if term and definition:
-            flashcards.append([term, definition])
-    
+        term, definition = parsed 
+        flashcards.append([term, definition])    # store as a 2-item list
  
-    if len(flashcards) == 0:   #stop early if the deck is empty (no valid cards to quiz)
+    if not flashcards:
         print("No valid flashcards found in this file.")
         return None
 
     file_name = filename
 
-    print("First flashcard:", flashcards[0])
-    print("Total cards:", len(flashcards))
 
     random.shuffle(flashcards) #shuffling so it's better for review
 
+    print("\n" + "="*50)
+    print(f"Loaded deck: {file_name}")
+    print(f"Total cards available: {len(flashcards)}")
+    print ("Let the review begin!")
+    print("="*50 + "\n")
 
     while True: #using this allows to keep going on until user provide valid number
         num_q = input(f"There are {len(flashcards)} cards. How many would you like? ")
@@ -100,7 +133,9 @@ def play_quiz(filename):
         else:
             print(f"❌ Incorrect. Correct answer: {definition}\n")
 
-    print(f"Your score: {score}/{num_q}\n")
+    print("-"*36)
+    print(f"Your score: {score}/{num_q}")
+    print("-"*36 + "\n")
 
     #store results so add_scores() can write to the history file
     final_score = score
@@ -132,16 +167,20 @@ def show_scores():
 
 def add_scores():
     global final_score, question_total, file_name
-    username = input("Enter your name: ")
+    username = ""
+    while username.strip() == "":
+        username = input("Enter your name: ").strip()
+        if username == "":
+            print("Please enter a non-empty name.")
     now = time.ctime()
     record = f"{username} ; {final_score}/{question_total} ; {file_name} ; {now}\n"
     try:
-        with open("scores.txt", "a") as score_file: #append mode saves new score without deleting older ones
+        with open("scores.txt", "a") as score_file:
             score_file.write(record)
         print("✅ Score saved!")
     except OSError as e:
         print("❌ Could not write to file:", e)
-
+        
 
 def print_error():
     print("*" * 50)

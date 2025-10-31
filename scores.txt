@@ -1,0 +1,4 @@
+v ; 0/1 ; periodic_table.txt ; Fri Oct 31 00:07:09 2025
+/usr/local/bin/python3 "/Users/sunnyxiong/Library/Mobile Documents/com~apple~CloudDocs/CS 2 Sunny/PA2/PA2_try.py" ; 1/1 ; periodic_table.txt ; Fri Oct 31 00:10:43 2025
+sunny ; 2/2 ; periodic_table.csv ; Fri Oct 31 00:11:08 2025
+ ; 1/1 ; periodic_table.txt ; Fri Oct 31 00:11:58 2025
