@@ -38,23 +38,23 @@ def parse_line(line):
     '''
 
 
-    line = line.strip()  # remove spaces & newline around the text
-    if line == "":       # ignore empty lines
+    line = line.strip() # remove spaces & newline around the text
+    if line == "": # ignore empty lines
         return None
 
     # accept only "term,definition" format
     if "," in line:
-        parts = line.split(",", 1)   # split only at first comma
+        parts = line.split(",", 1)  # split only at first comma
     else:
-        return None                  # no comma = not a valid card
+        return None # no comma = not a valid card
 
     term = parts[0].strip()
     definition = parts[1].strip()
 
-    if term and definition:          # both pieces must exist
-        return term, definition      # return both values together
+    if term and definition:  # both pieces must exist
+        return term, definition  # return both values together
 
-    return None                      # missing either piece = skip 
+    return None # missing either piece = skip 
 
 
 def play_quiz(filename):
@@ -68,7 +68,7 @@ def play_quiz(filename):
     None → file error or empty deck
     '''
 
-    global file_name, final_score, question_total   # allow function to update globals used later for saving scores
+    global file_name, final_score, question_total  # allow function to update globals used later for saving scores
 
     try:  # try reading file; prevents crash if user typed wrong filename
         with open(filename, "r") as f:  # open the deck in read-only mode
@@ -92,7 +92,6 @@ def play_quiz(filename):
 
     file_name = filename
 
-
     random.shuffle(flashcards) #shuffling so it's better for review
 
     print("\n" + "="*50)
@@ -107,7 +106,7 @@ def play_quiz(filename):
             print("Please type a NUMBER.")
             continue
         num_q = int(num_q)
-        if 1 <= num_q <= len(flashcards):
+        if 1 <= num_q <= len(flashcards): #if number is not in the range, it'll request a redo
             break
         print(f"Please type a number between 1 and {len(flashcards)}.")
     print("Okay! We'll do", num_q, "question(s).")
